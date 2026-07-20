@@ -254,8 +254,12 @@ await check('POST /api/mood/read with mock payment returns mood', async () => {
   assert.equal(r.status, 200);
   const j = await r.json();
   assert.equal(j.service, 'mood_read');
-  assert.ok(j.mood, 'expected mood object');
-  assert.ok(j.mood.valence > 0, `expected positive valence, got ${j.mood.valence}`);
+  // mood_read returns the mood vector flat at the top level
+  assert.equal(typeof j.valence, 'number', 'expected numeric valence');
+  assert.equal(typeof j.arousal, 'number', 'expected numeric arousal');
+  assert.equal(typeof j.intensity, 'number', 'expected numeric intensity');
+  assert.equal(typeof j.label, 'string', 'expected string label');
+  assert.ok(j.valence > 0, `expected positive valence, got ${j.valence}`);
 });
 
 await check('POST /api/mood/ritual with mock payment returns ritual', async () => {
