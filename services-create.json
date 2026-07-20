@@ -1,0 +1,34 @@
+[
+  {
+    "serviceName": "mood_read",
+    "serviceDescription": "Single-snapshot emotional read on text, wallet activity, or transaction. Returns mood label, 5-axis vector (valence, arousal, intensity), and detected lifestyle signals.\nInput: one of text (string), wallet (object), or transaction (object). Optional agentRole for mood_oracle only.",
+    "serviceType": "A2MCP",
+    "fee": "0.003",
+    "endpoint": "https://moodring-d49o.onrender.com/api/mood/read",
+    "operation": "create"
+  },
+  {
+    "serviceName": "mood_track",
+    "serviceDescription": "Stateful emotional tracking. Returns the emotional delta (valence, arousal, intensity) vs the prior call for the same subject, plus 7-call history.\nInput: subject (stable id: user id, wallet address, or session id) plus one of text, wallet, or transaction.",
+    "serviceType": "A2MCP",
+    "fee": "0.008",
+    "endpoint": "https://moodring-d49o.onrender.com/api/mood/track",
+    "operation": "create"
+  },
+  {
+    "serviceName": "mood_ritual",
+    "serviceDescription": "60-second intervention tuned to the detected emotional state: a specific breath pattern, a written affirmation, a hex color, a song recommendation, and a shareable text card.\nInput: one of text (string), wallet (object), or transaction (object).",
+    "serviceType": "A2MCP",
+    "fee": "0.01",
+    "endpoint": "https://moodring-d49o.onrender.com/api/mood/ritual",
+    "operation": "create"
+  },
+  {
+    "serviceName": "mood_oracle",
+    "serviceDescription": "Role-aware next-best-action for the calling agent. Returns what to do, the right tone, and the right intensity given current emotional state.\nInput: one of text, wallet, or transaction, plus optional agentRole (trader / assistant / social / dating / creative, defaults to assistant).",
+    "serviceType": "A2MCP",
+    "fee": "0.02",
+    "endpoint": "https://moodring-d49o.onrender.com/api/mood/oracle",
+    "operation": "create"
+  }
+]

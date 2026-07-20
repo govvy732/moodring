@@ -240,15 +240,16 @@ app.post(
 // =============================================================
 // Service 5 (FREE): mood_demo — rate-limited preview
 // =============================================================
+const DEMO_LIMIT = 60;
 const demoHits = new Map();
 app.post('/api/mood/demo', (req, res) => {
   const ip = req.ip || req.headers['x-forwarded-for'] || 'unknown';
   const now = Date.now();
   const window = demoHits.get(ip)?.filter((t) => now - t < 60_000) || [];
-  if (window.length >= 30) {
+  if (window.length >= DEMO_LIMIT) {
     return res.status(429).json({
       error: 'rate_limited',
-      message: 'Demo endpoint limited to 30 calls/minute per IP. Integrate x402 paid endpoints for unlimited calls.',
+      message: `Demo endpoint limited to ${DEMO_LIMIT} calls/minute per IP. Integrate x402 paid endpoints for unlimited calls.`,
     });
   }
   window.push(now);
@@ -266,7 +267,7 @@ app.post('/api/mood/demo', (req, res) => {
     service: 'mood_demo',
     version: '1.0.0',
     free: true,
-    rateLimit: '10/min per IP',
+    rateLimit: `${DEMO_LIMIT}/min per IP`,
     ...mood,
     upgrade: 'Pay 0.003 USDT via x402 at /api/mood/read for unlimited calls and schema-strict output.',
   });

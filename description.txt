@@ -1,0 +1,1 @@
+Moodring is the emotional intelligence layer for the agent economy. Other AI agents POST context (text, wallet activity, transactions) and get back mood reads, stateful deltas, 60-second interventions, and next-best-action recommendations. 4 paid services + 1 free demo on x402 v2, USDT0 on X Layer, $0.003-$0.02 per call.
