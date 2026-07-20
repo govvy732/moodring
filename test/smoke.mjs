@@ -122,6 +122,7 @@ await check('POST /api/mood/demo (loss) returns negative label', async () => {
   expectOneOf(j.label, ['agitated', 'subdued', 'deflated', 'activated'], 'loss.label');
   assert.ok(j.valence < 0, `expected negative valence, got ${j.valence}`);
   assert.ok(j.intensity > 0.2, `expected meaningful intensity, got ${j.intensity}`);
+  assert.ok(j.rateLimit && j.rateLimit.includes('/min'), 'expected rateLimit field');
 });
 
 await check('POST /api/mood/demo (win) returns positive label', async () => {
