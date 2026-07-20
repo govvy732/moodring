@@ -1,0 +1,34 @@
+{
+  "name": "moodring",
+  "version": "1.0.0",
+  "description": "Onchain Emotional Intelligence Layer for AI Agents. x402 v2 on X Layer.",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node test/smoke.mjs"
+  },
+  "keywords": [
+    "okx",
+    "x402",
+    "x-layer",
+    "ai-agents",
+    "asp",
+    "lifestyle",
+    "mood",
+    "emotional-intelligence"
+  ],
+  "author": "govvy732",
+  "license": "MIT",
+  "dependencies": {
+    "@okxweb3/x402-express": "^0.1.1",
+    "better-sqlite3": "^11.3.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Moodring — Onchain Emotional Intelligence for AI Agents</title>
+    <meta
+      name="description"
+      content="Other agents call Moodring to read emotional context, track mood over time, and decide the right next action. x402 v2 paid endpoints on X Layer. Lifestyle ASP on OKX.AI."
+    />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="bg-orbit"></div>
+
+    <header class="nav">
+      <div class="nav-inner">
+        <a href="/" class="logo">
+          <span class="logo-ring"></span>
+          <span class="logo-text">Moodring</span>
+        </a>
+        <nav class="nav-links">
+          <a href="#demo">Live demo</a>
+          <a href="#wallet">Wallet weather</a>
+          <a href="#services">Services</a>
+          <a href="#integrate">Integrate</a>
+          <a href="https://github.com/govvy732/moodring" target="_blank" rel="noopener">GitHub ↗</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- HERO -->
+      <section class="hero">
+        <div class="badges">
+          <span class="badge badge-network">X Layer · eip155:196</span>
+          <span class="badge badge-asset">USDT0</span>
+          <span class="badge badge-x402">x402 v2</span>
+          <span class="badge badge-cat">Lifestyle ASP</span>
+        </div>
+        <h1 class="hero-title">
+          Agents should ask <em>how you're doing</em><br />
+          before they ask for your money.
+        </h1>
+        <p class="hero-sub">
+          Moodring is the emotional intelligence layer for the agent economy. Other agents
+          POST context — chat, wallet activity, transactions — and get back mood reads, stateful
+          deltas, 60-second interventions, and next-best-action recommendations.
+        </p>
+        <div class="hero-actions">
+          <a href="#demo" class="btn btn-primary">Try the live demo</a>
+          <a href="#integrate" class="btn btn-ghost">4-line integration →</a>
+        </div>
+        <div class="hero-meta">
+          <div><span class="hero-meta-num">4</span><span class="hero-meta-label">paid services</span></div>
+          <div><span class="hero-meta-num">$0.003</span><span class="hero-meta-label">cheapest call</span></div>
+          <div><span class="hero-meta-num">10s</span><span class="hero-meta-label">p99 latency</span></div>
+        </div>
+      </section>
+
+      <!-- LIVE DEMO -->
+      <section id="demo" class="section">
+        <div class="section-head">
+          <h2>Live demo — paste any text, get a real emotional read</h2>
+          <p>
+            Calls the actual <code>/api/mood/demo</code> endpoint on this server. No mocks, no cached responses.
+          </p>
+        </div>
+        <div class="demo-grid">
+          <div class="demo-input">
+            <label for="demo-text">Try one of these or write your own</label>
+            <textarea id="demo-text" rows="6" placeholder="Just lost 30% on a position. The market's brutal today. I should have sold earlier. Sleep is going to be tough tonight."></textarea>
+            <div class="demo-presets">
+              <button class="chip" data-preset="loss">I lost money today</button>
+              <button class="chip" data-preset="win">Just hit a huge win</button>
+              <button class="chip" data-preset="tired">Exhausted, can't sleep</button>
+              <button class="chip" data-preset="calm">Quiet morning, feeling good</button>
+              <button class="chip" data-preset="angry">Furious at the rugpull</button>
+            </div>
+            <button id="demo-run" class="btn btn-primary">Classify mood</button>
+          </div>
+          <div class="demo-output" id="demo-output">
+            <div class="demo-empty">
+              <div class="demo-empty-ring"></div>
+              <p>Output will appear here.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WALLET WEATHER -->
+      <section id="wallet" class="section">
+        <div class="section-head">
+          <h2>Your wallet's emotional weather</h2>
+          <p>
+            Any X Layer address. We map its recent activity to a 7-day mood forecast. (Read-only — no wallet connect required.)
+          </p>
+        </div>
+        <div class="wallet-card">
+          <div class="wallet-input">
+            <input
+              id="wallet-addr"
+              type="text"
+              placeholder="0x8bfc0f414be2f70c5930f7713be1db188eb0c3bd"
+              spellcheck="false"
+            />
+            <button id="wallet-run" class="btn btn-primary">Forecast</button>
+          </div>
+          <div class="wallet-output" id="wallet-output">
+            <div class="demo-empty">
+              <p>Enter an X Layer address to see its emotional weather.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SERVICES -->
+      <section id="services" class="section">
+        <div class="section-head">
+          <h2>Five services, one x402 endpoint</h2>
+          <p>
+            Every service is a single POST. Every paid service returns 402 with a payment challenge first.
+            The free demo is rate-limited at 10 calls/min/IP.
+          </p>
+        </div>
+        <div class="services-grid">
+          <div class="service-card">
+            <div class="service-head">
+              <span class="service-id">mood_read</span>
+              <span class="service-price">$0.003</span>
+            </div>
+            <h3>Single-snapshot read</h3>
+            <p>Emotional classification of text, wallet state, or a transaction. Returns valence, arousal, intensity, label, and detected lifestyle signals.</p>
+            <code>POST /api/mood/read</code>
+          </div>
+          <div class="service-card highlight">
+            <div class="service-head">
+              <span class="service-id">mood_track</span>
+              <span class="service-price">$0.008</span>
+            </div>
+            <h3>Stateful delta</h3>
+            <p>Returns the emotional change vs. the prior call for the same subject. Direction, magnitude, and 7-call history included.</p>
+            <code>POST /api/mood/track</code>
+          </div>
+          <div class="service-card highlight">
+            <div class="service-head">
+              <span class="service-id">mood_ritual</span>
+              <span class="service-price">$0.01</span>
+            </div>
+            <h3>60-second intervention</h3>
+            <p>A complete ritual: breath pattern, affirmation, color, and song. Ready to drop into any user-facing flow.</p>
+            <code>POST /api/mood/ritual</code>
+          </div>
+          <div class="service-card">
+            <div class="service-head">
+              <span class="service-id">mood_oracle</span>
+              <span class="service-price">$0.02</span>
+            </div>
+            <h3>Next-best-action</h3>
+            <p>Returns the right thing for the calling agent to do. Role-aware advice for trader, assistant, social, dating, or creative agents.</p>
+            <code>POST /api/mood/oracle</code>
+          </div>
+          <div class="service-card service-free">
+            <div class="service-head">
+              <span class="service-id">mood_demo</span>
+              <span class="service-price">FREE</span>
+            </div>
+            <h3>Try before you integrate</h3>
+            <p>Same logic as mood_read, no payment, 10 calls/minute per IP. Hit the demo widget above to try it now.</p>
+            <code>POST /api/mood/demo</code>
+          </div>
+        </div>
+      </section>
+
+      <!-- INTEGRATE -->
+      <section id="integrate" class="section">
+        <div class="section-head">
+          <h2>4 lines. One POST. Any agent.</h2>
+          <p>Moodring is a stateless function call. No auth, no sessions, no API keys. Just x402 payment + JSON in, JSON out.</p>
+        </div>
+        <div class="code-tabs">
+          <div class="code-tab active" data-lang="js">Node</div>
+          <div class="code-tab" data-lang="py">Python</div>
+          <div class="code-tab" data-lang="curl">cURL</div>
+        </div>
+        <pre class="code-block" id="code-js"><code>const res = await fetch('https://moodring.onrender.com/api/mood/read', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ text: 'Just lost 30% on a position. Sleep is going to be tough.' }),
+});
+// Returns 402 with PAYMENT-REQUIRED header
+// Sign with your EIP-3009 wallet, retry with X-PAYMENT header, get JSON back</code></pre>
+        <pre class="code-block hidden" id="code-py"><code>import requests
+r = requests.post('https://moodring.onrender.com/api/mood/read', json={
+    'text': 'Just lost 30% on a position. Sleep is going to be tough.'
+})
+# Returns 402 with PAYMENT-REQUIRED header
+# Sign with your EIP-3009 wallet, retry with X-PAYMENT header, get JSON back</code></pre>
+        <pre class="code-block hidden" id="code-curl"><code>curl -X POST https://moodring.onrender.com/api/mood/read \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Just lost 30% on a position. Sleep is going to be tough."}'
+# Returns 402 with PAYMENT-REQUIRED header
+# Sign with your EIP-3009 wallet, retry with X-PAYMENT header, get JSON back</code></pre>
+        <div class="manifest-cta">
+          <p>The full x402 v2 manifest:</p>
+          <a href="/.well-known/x402" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">/.well-known/x402 ↗</a>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="section cta-section">
+        <h2>Live on OKX.AI marketplace</h2>
+        <p>
+          Moodring is a Lifestyle ASP on <a href="https://www.okx.ai/agents" target="_blank" rel="noopener">okx.ai/agents</a>.
+          Other agents can call it directly, or you can self-host the open source build below.
+        </p>
+        <div class="hero-actions">
+          <a href="https://www.okx.ai/agents" target="_blank" rel="noopener" class="btn btn-primary">View on OKX.AI</a>
+          <a href="https://github.com/govvy732/moodring" target="_blank" rel="noopener" class="btn btn-ghost">Open source on GitHub →</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div>
+          <div class="logo">
+            <span class="logo-ring"></span>
+            <span class="logo-text">Moodring</span>
+          </div>
+          <p class="footer-tag">Onchain emotional intelligence for the agent economy.</p>
+        </div>
+        <div class="footer-cols">
+          <div class="footer-col">
+            <h4>Service</h4>
+            <a href="https://moodring.onrender.com/.well-known/x402">x402 manifest</a>
+            <a href="https://moodring.onrender.com/health">Health</a>
+            <a href="https://github.com/govvy732/moodring">GitHub</a>
+          </div>
+          <div class="footer-col">
+            <h4>Network</h4>
+            <span>X Layer (eip155:196)</span>
+            <span>USDT0 · 6 decimals</span>
+            <span>OKX Payment SDK</span>
+          </div>
+          <div class="footer-col">
+            <h4>Built for</h4>
+            <a href="https://www.okx.ai/agents">OKX.AI marketplace</a>
+            <span>OKX AI Genesis Hackathon</span>
+            <span>Lifestyle category</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>MIT licensed · open source</span>
+        <span>Built for the OKX AI Genesis Hackathon</span>
+      </div>
+    </footer>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

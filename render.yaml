@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: moodring
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: PUBLIC_URL
+        value: https://moodring.onrender.com
+      - key: RECEIVE_ADDRESS
+        sync: false
+      - key: AGENT_PRIVATE_KEY
+        sync: false
+    autoDeploy: true
