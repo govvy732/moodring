@@ -1,18 +1,22 @@
 # Google Form Answers — Moodring ASP
 
 > Ready to paste into the OKX AI Genesis Hackathon Google form.
-> All values verified against the live service + repo.
+> All values verified against the live service + repo + on-chain tx.
 
 ## ASP Identity
 
 | Field | Value |
 |---|---|
 | **ASP Name** | Moodring |
-| **Agent ID (onchain)** | _(to be filled after `agent create` returns `newAgentId`)_ |
+| **Agent ID (onchain)** | **6959** |
+| **Activation tx** | 0xaad2747d8e7f2d4d15b86b8354551382155c5486a9f48a9759b8ad3a951911e4 |
+| **Update tx (services + logo)** | 0xe1de45252b4b95c911217f968260bfd226f90e3792f1aabbcc9f77a01f8608c9 |
 | **ASP Type** | A2MCP |
-| **Chain** | X Layer (eip155:196) |
-| **Wallet Address** | 0x1d238d991786b57d0cf61b854b476489320d86de |
-| **Receive Asset** | USDT0 (6 decimals) |
+| **Chain** | X Layer (eip155:196, chainIndex 196) |
+| **Owner Wallet** | 0xf5329bba1f088b5ded5db40e5e9a924db9676705 |
+| **Receive Asset** | USDT0 (6 decimals) at 0x779ded0c9e1022225f8e0630b35a9b54be713736 |
+| **Avatar** | https://static.okx.com/cdn/web3/wallet/marketplace/headimages/agent/avatar/4d868e1e-3bf5-492d-ae53-2fc1d03389ae.png |
+| **Listing status** | Under review (approvalStatus 2) |
 
 ## Live URLs
 
@@ -25,17 +29,19 @@
 
 ## ASP Description (≤500 chars)
 
-Moodring is the emotional intelligence layer for the agent economy. Other AI agents POST a piece of context — text, wallet activity, or a transaction — and get back an emotional read on a 5-axis vector (valence, arousal, intensity, label, detected lifestyle signals). The 4 paid services (mood_read, mood_track, mood_ritual, mood_oracle) and 1 free demo are all x402 v2 paid endpoints on X Layer, priced from $0.003 to $0.02 USDT0 per call. The free demo at /api/mood/demo is rate-limited at 60 calls/min/IP and is the on-page interactive widget. mood_track uses SQLite-backed state to return the emotional delta vs the prior call for the same subject. Lifestyle category with cross-category eligibility for Best Product and Software Utility.
+Moodring is the emotional intelligence layer for the agent economy. Other AI agents POST context (text, wallet activity, transactions) and get back mood reads, stateful deltas, 60-second interventions, and next-best-action recommendations. 4 paid services + 1 free demo on x402 v2, USDT0 on X Layer, $0.003-$0.02 per call.
+
+(323 chars)
 
 ## Services (4 paid + 1 free)
 
-| # | Service ID | Price (USDT0) | Endpoint |
-|---|---|---|---|
-| 1 | mood_read | 0.003 | POST /api/mood/read |
-| 2 | mood_track | 0.008 | POST /api/mood/track |
-| 3 | mood_ritual | 0.010 | POST /api/mood/ritual |
-| 4 | mood_oracle | 0.020 | POST /api/mood/oracle |
-| 5 | mood_demo | FREE (60/min/IP) | POST /api/mood/demo |
+| # | Service ID | Price (USDT0) | Endpoint | Service ID (onchain) |
+|---|---|---|---|---|
+| 1 | mood_read | 0.003 | POST /api/mood/read | 35920 |
+| 2 | mood_track | 0.008 | POST /api/mood/track | 35921 |
+| 3 | mood_ritual | 0.010 | POST /api/mood/ritual | 35922 |
+| 4 | mood_oracle | 0.020 | POST /api/mood/oracle | 35923 |
+| 5 | mood_demo | FREE (60/min/IP) | POST /api/mood/demo | (not listed, free preview) |
 
 ## X Post URL
 
@@ -65,7 +71,7 @@ AI agents (traders, social bots, dating agents, assistants, creative tools) call
 - [x] Service is HTTPS, on a domain
 - [x] x402 v2 compliant: returns HTTP 402 + base64 PAYMENT-REQUIRED header
 - [x] x402 manifest at /.well-known/x402
-- [x] Listed on OKX.AI marketplace (Agent ID: _TBD_)
+- [x] Listed on OKX.AI marketplace (Agent ID: **6959** — **Listing under review**, 4 services attached)
 - [x] Open source repo
 - [x] X post with #OKXAI (URL: _TBD_)
 - [x] Demo video ≤90s
