@@ -194,11 +194,19 @@ await check('POST /api/mood/read without payment returns 402 + PAYMENT-REQUIRED'
   const paymentRequired = r.headers.get('payment-required') || r.headers.get('x-payment-required');
   assert.ok(paymentRequired, 'expected PAYMENT-REQUIRED header');
   const decoded = JSON.parse(Buffer.from(paymentRequired, 'base64').toString('utf8'));
+  // x402 v2 spec assertions
   assert.equal(decoded.x402Version, 2);
+  assert.ok(decoded.resource, 'v2 requires top-level resource object');
+  assert.equal(decoded.resource.mimeType, 'application/json');
   assert.equal(decoded.accepts[0].scheme, 'exact');
   assert.equal(decoded.accepts[0].network, 'eip155:196');
-  assert.equal(decoded.accepts[0].assetDecimals, 6);
-  assert.equal(decoded.accepts[0].maxAmountRequired, '3000'); // 0.003 USDT
+  assert.equal(decoded.accepts[0].amount, '3000');
+  assert.equal(typeof decoded.accepts[0].payTo, 'string');
+  assert.ok(decoded.accepts[0].payTo.startsWith('0x'));
+  assert.equal(typeof decoded.accepts[0].maxTimeoutSeconds, 'number');
+  assert.ok(decoded.accepts[0].extra);
+  assert.equal(decoded.accepts[0].extra.name, 'USD₮0');
+  assert.ok(decoded.accepts[0].extra.version);
 });
 
 await check('POST /api/mood/track without payment returns 402 ($0.008)', async () => {
@@ -211,7 +219,7 @@ await check('POST /api/mood/track without payment returns 402 ($0.008)', async (
   const decoded = JSON.parse(
     Buffer.from(r.headers.get('payment-required'), 'base64').toString('utf8')
   );
-  assert.equal(decoded.accepts[0].maxAmountRequired, '8000'); // 0.008 USDT
+  assert.equal(decoded.accepts[0].amount, '8000'); // 0.008 USDT
 });
 
 await check('POST /api/mood/ritual without payment returns 402 ($0.01)', async () => {
@@ -224,7 +232,7 @@ await check('POST /api/mood/ritual without payment returns 402 ($0.01)', async (
   const paymentRequired = r.headers.get('payment-required') || r.headers.get('x-payment-required');
   assert.ok(paymentRequired);
   const decoded = JSON.parse(Buffer.from(paymentRequired, 'base64').toString('utf8'));
-  assert.equal(decoded.accepts[0].maxAmountRequired, '10000'); // 0.01 USDT
+  assert.equal(decoded.accepts[0].amount, '10000'); // 0.01 USDT
 });
 
 await check('POST /api/mood/oracle without payment returns 402 ($0.02)', async () => {
@@ -237,7 +245,7 @@ await check('POST /api/mood/oracle without payment returns 402 ($0.02)', async (
   const paymentRequired = r.headers.get('payment-required') || r.headers.get('x-payment-required');
   assert.ok(paymentRequired);
   const decoded = JSON.parse(Buffer.from(paymentRequired, 'base64').toString('utf8'));
-  assert.equal(decoded.accepts[0].maxAmountRequired, '20000'); // 0.02 USDT
+  assert.equal(decoded.accepts[0].amount, '20000'); // 0.02 USDT
 });
 
 // ============================================================
