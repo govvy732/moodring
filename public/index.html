@@ -197,18 +197,18 @@
   body: JSON.stringify({ text: 'Just lost 30% on a position. Sleep is going to be tough.' }),
 });
 // Returns 402 with PAYMENT-REQUIRED header
-// Sign with your EIP-3009 wallet, retry with X-PAYMENT header, get JSON back</code></pre>
+// Sign with your EIP-3009 wallet, retry with PAYMENT-SIGNATURE header, get JSON back</code></pre>
         <pre class="code-block hidden" id="code-py"><code>import requests
 r = requests.post('https://moodring.onrender.com/api/mood/read', json={
     'text': 'Just lost 30% on a position. Sleep is going to be tough.'
 })
 # Returns 402 with PAYMENT-REQUIRED header
-# Sign with your EIP-3009 wallet, retry with X-PAYMENT header, get JSON back</code></pre>
+# Sign with your EIP-3009 wallet, retry with PAYMENT-SIGNATURE header, get JSON back</code></pre>
         <pre class="code-block hidden" id="code-curl"><code>curl -X POST https://moodring.onrender.com/api/mood/read \
   -H "Content-Type: application/json" \
   -d '{"text":"Just lost 30% on a position. Sleep is going to be tough."}'
 # Returns 402 with PAYMENT-REQUIRED header
-# Sign with your EIP-3009 wallet, retry with X-PAYMENT header, get JSON back</code></pre>
+# Sign with your EIP-3009 wallet, retry with PAYMENT-SIGNATURE header, get JSON back</code></pre>
         <div class="manifest-cta">
           <p>The full x402 v2 manifest:</p>
           <a href="/.well-known/x402" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">/.well-known/x402 ↗</a>

@@ -256,7 +256,7 @@ await check('POST /api/mood/read with mock payment returns mood', async () => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-PAYMENT': 'mock-payment-for-hackathon-demo',
+      'PAYMENT-SIGNATURE': 'mock-payment-for-hackathon-demo',
     },
     body: JSON.stringify({ text: "I'm so excited for the future" }),
   });
@@ -276,7 +276,7 @@ await check('POST /api/mood/ritual with mock payment returns ritual', async () =
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-PAYMENT': 'mock-payment-for-hackathon-demo',
+      'PAYMENT-SIGNATURE': 'mock-payment-for-hackathon-demo',
     },
     body: JSON.stringify({ text: "Anxious, can't sleep" }),
   });
@@ -296,7 +296,7 @@ await check('POST /api/mood/oracle with mock payment returns role-aware action',
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-PAYMENT': 'mock-payment-for-hackathon-demo',
+      'PAYMENT-SIGNATURE': 'mock-payment-for-hackathon-demo',
     },
     body: JSON.stringify({ text: "Furious about losses", agentRole: "trader" }),
   });
@@ -314,7 +314,7 @@ await check('POST /api/mood/oracle supports all 5 roles', async () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-PAYMENT': 'mock',
+        'PAYMENT-SIGNATURE': 'mock',
       },
       body: JSON.stringify({ text: "Feeling a bit off today", agentRole: role }),
     });
@@ -328,7 +328,7 @@ await check('POST /api/mood/oracle supports all 5 roles', async () => {
 await check('POST /api/mood/track records and returns history', async () => {
   const r1 = await fetch(`${BASE}/api/mood/track`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-PAYMENT': 'mock' },
+    headers: { 'Content-Type': 'application/json', 'PAYMENT-SIGNATURE': 'mock' },
     body: JSON.stringify({ subject: `test-${Date.now()}`, text: "Tired and stressed, can't sleep" }),
   });
   assert.equal(r1.status, 200);
@@ -339,7 +339,7 @@ await check('POST /api/mood/track records and returns history', async () => {
 
   const r2 = await fetch(`${BASE}/api/mood/track`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-PAYMENT': 'mock' },
+    headers: { 'Content-Type': 'application/json', 'PAYMENT-SIGNATURE': 'mock' },
     body: JSON.stringify({ subject: j1.subject, text: "AMAZING! Won everything!" }),
   });
   assert.equal(r2.status, 200);
