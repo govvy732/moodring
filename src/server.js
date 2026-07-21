@@ -45,7 +45,7 @@ app.get('/.well-known/x402', (req, res) => {
     network: 'eip155:196',
     chain: 'X Layer',
     asset: 'USDT0',
-    assetAddress: '0x779Ded0c9e10eA8507B6c1e8ed4F2944A3A1A3dC',
+    assetAddress: '0x779ded0c9e1022225f8e0630b35a9b54be713736',
     assetDecimals: 6,
     receiveAddress: RECEIVE_ADDRESS,
     facilitator: 'https://x402.okx.com',

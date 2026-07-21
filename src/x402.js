@@ -9,7 +9,7 @@
 //   extra: { name (EIP-712 token name), version (EIP-712 domain version) }
 
 const NETWORK = 'eip155:196'; // X Layer
-const ASSET = '0x779Ded0c9e10eA8507B6c1e8ed4F2944A3A1A3dC'; // USDT0 on X Layer
+const ASSET = '0x779ded0c9e1022225f8e0630b35a9b54be713736'; // USDT0 on X Layer
 const ASSET_DECIMALS = 6;
 const ASSET_NAME = 'USD₮0';
 const ASSET_VERSION = '1';
