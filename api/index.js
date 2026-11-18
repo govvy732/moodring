@@ -1,5 +1,5 @@
 // Vercel serverless entry. Static files in public/ are served by Vercel's CDN;
-// every API route is rewritten here (see vercel.json).
+// any path that is not a static file is rewritten here (see vercel.json).
 import app from '../src/app.js';
 import { initMoodStore } from '../src/moodStore.js';
 
