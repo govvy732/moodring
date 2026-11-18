@@ -21,50 +21,146 @@ const NEGATIVE_WORDS = new Set([
 ]);
 
 const HIGH_AROUSAL = new Set([
-  '!', '!!', '!!!', 'WTF', 'OMG', 'FUCK', 'SHIT', 'DAMN', 'WHAT', 'HUH', 'WOW',
+  'WTF', 'OMG', 'FUCK', 'SHIT', 'DAMN', 'WHAT', 'HUH', 'WOW',
   'AHH', 'AHHH', 'GAAAH', 'FFFF', 'AAAA', 'NOOO', 'YESSS', 'YESS', 'NOOOO',
-  'LFG', 'WAGMI', 'REKT', 'FOMO', 'FUD', 'WTF', 'SMH', 'BRUH',
+  'LFG', 'WAGMI', 'REKT', 'FOMO', 'FUD', 'SMH', 'BRUH', 'HYPED', 'FURIOUS',
+]);
+// Subset of HIGH_AROUSAL that is intense in any case ("wtf" == "WTF").
+// The rest ("what", "wow", "huh") only count when shouted in caps.
+const ALWAYS_INTENSE = new Set([
+  'WTF', 'OMG', 'FUCK', 'SHIT', 'LFG', 'REKT', 'FOMO', 'FUD', 'BRUH', 'HYPED', 'FURIOUS',
+  'AHH', 'AHHH', 'GAAAH', 'NOOO', 'NOOOO', 'YESSS',
 ]);
 
+// Words that pull arousal DOWN. Calm words make positive states "peaceful";
+// low-energy words make negative states "deflated".
+const CALM_WORDS = new Set([
+  'calm', 'peaceful', 'serene', 'relaxed', 'relaxing', 'chill', 'quiet', 'gentle',
+  'still', 'slow', 'rested', 'cozy', 'tranquil', 'content', 'mellow', 'easy',
+]);
+
+const LOW_ENERGY_WORDS = new Set([
+  'tired', 'exhausted', 'drained', 'numb', 'empty', 'hopeless', 'depressed',
+  'sleepy', 'lethargic', 'defeated', 'flat', 'meh', 'burnt', 'burned', 'lonely',
+  'miserable', 'heavy', 'sluggish', 'drowsy',
+]);
+
+// Negators flip the valence of the next few words ("not happy", "don't love").
+// Apostrophes are stripped before lookup, so "don't" → "dont".
+const NEGATORS = new Set([
+  'not', 'no', 'never', 'nothing', 'nobody', 'none', 'nor', 'neither', 'without',
+  'hardly', 'barely', 'cannot', 'cant', 'dont', 'doesnt', 'didnt', 'isnt', 'arent',
+  'wasnt', 'werent', 'wont', 'wouldnt', 'shouldnt', 'couldnt', 'aint', 'havent',
+  'hasnt', 'hadnt',
+]);
+const NEGATION_WINDOW = 3; // words after a negator that get flipped
+
+// Lifestyle domains — matched on whole words only ("interest" ≠ "rest").
 const LIFESTYLE_SIGNALS = {
-  sleep: ['sleep', 'tired', 'exhausted', 'insomnia', 'awake', 'rest', 'bed', 'nap', 'dream'],
-  food: ['eat', 'eating', 'food', 'hungry', 'meal', 'breakfast', 'lunch', 'dinner', 'snack'],
-  movement: ['run', 'running', 'walk', 'walking', 'gym', 'workout', 'lift', 'lifting', 'yoga', 'stretch'],
-  social: ['friend', 'family', 'partner', 'date', 'lonely', 'alone', 'together', 'meet', 'party'],
-  money: ['paid', 'salary', 'rent', 'broke', 'bill', 'money', 'cash', 'income', 'budget'],
-  health: ['sick', 'headache', 'fever', 'cough', 'pain', 'doctor', 'meds', 'medicine'],
+  sleep: ['sleep', 'sleeping', 'slept', 'sleepy', 'asleep', 'tired', 'exhausted', 'insomnia', 'awake', 'rest', 'resting', 'bed', 'bedtime', 'nap', 'napping', 'dream', 'dreams', 'nightmare'],
+  food: ['eat', 'eating', 'ate', 'eaten', 'food', 'hungry', 'meal', 'meals', 'breakfast', 'lunch', 'dinner', 'snack', 'snacks', 'cook', 'cooking'],
+  movement: ['run', 'running', 'ran', 'walk', 'walking', 'walked', 'gym', 'workout', 'lift', 'lifting', 'yoga', 'stretch', 'stretching', 'exercise', 'hike', 'swim'],
+  social: ['friend', 'friends', 'family', 'partner', 'date', 'dating', 'lonely', 'alone', 'together', 'meet', 'meeting', 'party', 'mom', 'dad', 'wife', 'husband', 'girlfriend', 'boyfriend'],
+  money: ['paid', 'salary', 'rent', 'broke', 'bill', 'bills', 'money', 'cash', 'income', 'budget', 'debt', 'loan', 'savings'],
+  health: ['sick', 'headache', 'fever', 'cough', 'pain', 'doctor', 'meds', 'medicine', 'hospital', 'injury'],
 };
+const SIGNAL_INDEX = new Map();
+for (const [domain, words] of Object.entries(LIFESTYLE_SIGNALS)) {
+  for (const w of words) {
+    if (!SIGNAL_INDEX.has(w)) SIGNAL_INDEX.set(w, []);
+    SIGNAL_INDEX.get(w).push(domain);
+  }
+}
+
+// Every label classifyMood can return. All of them are reachable.
+export const MOOD_LABELS = Object.freeze([
+  'energized', 'content', 'peaceful', 'activated', 'neutral', 'agitated', 'subdued', 'deflated',
+]);
+
+// Tokenizer: words (keeping inner apostrophes) and runs of "!" as their own tokens.
+// Sentence punctuation (. , ; : ? and newlines) is kept as a "|" boundary token
+// so negation does not leak across clauses.
+const TOKEN_RE = /[A-Za-z0-9]+(?:['’][A-Za-z]+)*|!+|[.,;:?\n]+/g;
+
+function tokenize(text) {
+  const out = [];
+  for (const m of text.matchAll(TOKEN_RE)) {
+    const raw = m[0];
+    if (/^!+$/.test(raw)) out.push({ kind: 'bang', raw, n: raw.length });
+    else if (/^[.,;:?\n]+$/.test(raw)) out.push({ kind: 'boundary', raw });
+    else out.push({ kind: 'word', raw, word: raw.toLowerCase().replace(/['’]/g, '') });
+  }
+  return out;
+}
+
+function isAllCaps(raw) {
+  // At least 2 letters, every letter uppercase (digits/apostrophes ignored).
+  const letters = raw.replace(/[^A-Za-z]/g, '');
+  return letters.length >= 2 && letters === letters.toUpperCase();
+}
 
 // =====================================================================
 // classifyMood — returns a 5-axis mood vector
 // valence:   -1 (negative)  to +1 (positive)
 // arousal:   -1 (calm)      to +1 (intense)
 // intensity:  0 (flat)      to  1 (strong)
-// label:     1 of 9 categorical labels
+// label:     1 of 8 categorical labels (see MOOD_LABELS)
 // signals:   detected lifestyle domains (for downstream filtering)
 // =====================================================================
 export function classifyMood({ text = '', wallet = null, transaction = null } = {}) {
-  const lower = (text || '').toLowerCase();
-  const tokens = lower.split(/\s+/).filter(Boolean);
+  const tokens = tokenize(String(text || ''));
+  const wordTokens = tokens.filter((t) => t.kind === 'word');
+  const capsEligible = wordTokens.length > 0;
 
   let positiveCount = 0;
   let negativeCount = 0;
-  let arousalBoost = 0;
+  let arousalBoost = 0; // pushes arousal up
+  let calmPull = 0; // pushes arousal down
   const signals = {};
 
+  let negateLeft = 0;
   for (const tok of tokens) {
-    const clean = tok.replace(/[^a-z0-9!]/g, '');
-    const upper = clean.toUpperCase();
-    if (POSITIVE_WORDS.has(clean) || POSITIVE_WORDS.has(tok)) positiveCount++;
-    if (NEGATIVE_WORDS.has(clean) || NEGATIVE_WORDS.has(tok)) negativeCount++;
-    if (clean.includes('!')) arousalBoost += 0.05;
-    if (clean === clean.toUpperCase() && clean.length > 1) arousalBoost += 0.15;
-    if (HIGH_AROUSAL.has(upper)) arousalBoost += 0.2;
-  }
+    if (tok.kind === 'boundary') {
+      negateLeft = 0;
+      continue;
+    }
+    if (tok.kind === 'bang') {
+      arousalBoost += 0.05 * Math.min(tok.n, 3);
+      negateLeft = 0;
+      continue;
+    }
 
-  for (const [domain, words] of Object.entries(LIFESTYLE_SIGNALS)) {
-    const hits = words.filter((w) => lower.includes(w)).length;
-    if (hits > 0) signals[domain] = hits;
+    const w = tok.word;
+    const upper = tok.raw.toUpperCase().replace(/['’]/g, '');
+
+    // ALL CAPS is detected on the original text, before lowercasing.
+    const shouted = capsEligible && isAllCaps(tok.raw);
+    if (shouted) arousalBoost += 0.15;
+    if (HIGH_AROUSAL.has(upper) && (shouted || ALWAYS_INTENSE.has(upper))) arousalBoost += 0.2;
+
+    if (NEGATORS.has(w)) {
+      negateLeft = NEGATION_WINDOW;
+      continue;
+    }
+
+    const negated = negateLeft > 0;
+    if (negateLeft > 0) negateLeft--;
+
+    if (POSITIVE_WORDS.has(w)) {
+      if (negated) negativeCount += 1; // "not happy" → negative
+      else positiveCount += 1;
+    } else if (NEGATIVE_WORDS.has(w)) {
+      if (negated) positiveCount += 0.5; // "not bad" → mildly positive
+      else negativeCount += 1;
+    }
+
+    if (!negated) {
+      if (CALM_WORDS.has(w)) calmPull += 0.2;
+      if (LOW_ENERGY_WORDS.has(w)) calmPull += 0.2;
+    }
+
+    const domains = SIGNAL_INDEX.get(w);
+    if (domains) for (const d of domains) signals[d] = (signals[d] || 0) + 1;
   }
 
   // Wallet-derived signals (if passed)
@@ -95,20 +191,15 @@ export function classifyMood({ text = '', wallet = null, transaction = null } = 
   const total = positiveCount + negativeCount;
   // More sensitive valence: use a smaller denominator so strong inputs register
   const valence = total === 0 ? 0 : (positiveCount - negativeCount) / Math.max(total, 2.5);
-  const arousal = Math.max(-1, Math.min(1, arousalBoost * 1.5));
-  const intensity = Math.min(1, total / 6 + arousalBoost);
+  const arousal = Math.max(-1, Math.min(1, (arousalBoost - calmPull) * 1.5));
+  const intensity = Math.min(1, total / 6 + arousalBoost + calmPull * 0.5);
 
-  // Map to 9 categorical labels
+  // Map to 8 categorical labels on a valence × arousal grid
   let label;
   if (intensity < 0.15) label = 'neutral';
-  else if (valence > 0.15 && arousal > 0.15) label = 'energized';
-  else if (valence > 0.15 && arousal <= 0.15) label = 'content';
-  else if (valence > 0.15 && arousal < -0.15) label = 'peaceful';
-  else if (valence < -0.15 && arousal > 0.15) label = 'agitated';
-  else if (valence < -0.15 && arousal <= 0.15) label = 'subdued';
-  else if (valence < -0.15 && arousal < -0.15) label = 'deflated';
-  else if (valence >= -0.15 && valence <= 0.15 && arousal > 0.15) label = 'activated';
-  else label = 'neutral';
+  else if (valence > 0.15) label = arousal > 0.15 ? 'energized' : arousal < -0.15 ? 'peaceful' : 'content';
+  else if (valence < -0.15) label = arousal > 0.15 ? 'agitated' : arousal < -0.15 ? 'deflated' : 'subdued';
+  else label = arousal > 0.15 ? 'activated' : 'neutral';
 
   return {
     valence: +valence.toFixed(3),
@@ -176,7 +267,7 @@ const INTERVENTIONS = {
   },
 };
 
-export function generateIntervention(mood) {
+export function generateIntervention(mood, { baseUrl = null } = {}) {
   const ritual = INTERVENTIONS[mood.label] || INTERVENTIONS.neutral;
   return {
     durationSeconds: ritual.breath.seconds,
@@ -187,7 +278,7 @@ export function generateIntervention(mood) {
     song: ritual.song,
     shareable: {
       text: `My current mood: ${mood.label}. Today's ritual: ${ritual.song.title} by ${ritual.song.artist}. ${ritual.affirmation}`,
-      url: 'https://moodring.onrender.com',
+      url: baseUrl || process.env.PUBLIC_URL || null,
     },
   };
 }
