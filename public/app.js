@@ -84,14 +84,14 @@
   // ---------- Fill live origin into code snippets ----------
   document.querySelectorAll('.origin').forEach((el) => (el.textContent = API_BASE));
 
-  // ---------- Hero moon reacts to the last read ----------
+  // ---------- Hero logo glow reacts to the last read ----------
   function setMoon(label) {
     const m = MOOD[label] || MOOD.neutral;
     const moon = $('#hero-moon');
     if (!moon) return;
     moon.style.setProperty('--mood', m.color);
-    $('#hero-emoji').textContent = m.emoji;
-    $('#hero-caption').textContent = `last read: ${label}`;
+    const cap = $('#hero-caption');
+    if (cap) cap.textContent = `${m.emoji} last read: ${label}`;
   }
 
   // ---------- Demo ----------

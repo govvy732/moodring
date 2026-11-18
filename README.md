@@ -1,4 +1,6 @@
-# 🌙 Moodring
+<p align="center"><img src="public/logo.png" width="180" alt="Moodring logo"></p>
+
+# Moodring
 
 **Onchain Emotional Intelligence Layer for AI Agents.**
 

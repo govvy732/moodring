@@ -12,7 +12,20 @@
     <meta property="og:title" content="Moodring — emotional intelligence for AI agents" />
     <meta property="og:description" content="Agents should ask how you're doing before they ask for your money." />
     <meta property="og:type" content="website" />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Moodring — Agents should ask how you're doing before they ask for your money" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Moodring — emotional intelligence for AI agents" />
+    <meta name="twitter:description" content="Agents should ask how you're doing before they ask for your money." />
+    <meta name="twitter:image" content="/og-image.png" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/favicon-16.png" type="image/png" sizes="16x16" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
@@ -21,7 +34,10 @@
     <header class="nav" id="top">
       <div class="wrap nav-inner">
         <a href="#top" class="logo" aria-label="Moodring home">
-          <span class="ring" aria-hidden="true"></span>
+          <picture>
+            <source srcset="/logo-64.webp" type="image/webp" />
+            <img class="logo-mark" src="/logo-64.png" width="32" height="32" alt="" decoding="async" />
+          </picture>
           <span>Moodring</span>
         </a>
         <nav class="nav-links" aria-label="Sections">
@@ -54,9 +70,12 @@
             <li>x402 v2</li><li>X Layer · eip155:196</li><li>USDT0</li><li>Open source · MIT</li>
           </ul>
         </div>
-        <div class="hero-moon" aria-hidden="true">
-          <div class="moon" id="hero-moon">
-            <div class="moon-core"><span id="hero-emoji">🌙</span></div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="hero-logo-wrap" id="hero-moon">
+            <picture>
+              <source srcset="/logo.webp" type="image/webp" />
+              <img class="hero-logo" src="/logo.png" width="512" height="512" alt="" fetchpriority="high" />
+            </picture>
           </div>
           <div class="moon-caption" id="hero-caption">waiting for a feeling…</div>
         </div>
@@ -103,7 +122,10 @@
           </div>
           <div class="demo-out" id="demo-output" aria-live="polite">
             <div class="empty">
-              <div class="ring ring-lg" aria-hidden="true"></div>
+              <picture>
+                <source srcset="/logo-64.webp" type="image/webp" />
+                <img class="empty-logo" src="/logo-64.png" width="64" height="64" alt="" />
+              </picture>
               <p>Pick an example or write your own, then press <strong>Read the mood</strong>.</p>
             </div>
           </div>
@@ -277,7 +299,13 @@ curl -X POST <span class="origin"></span>/api/mood/read \
     <footer class="footer">
       <div class="wrap footer-inner">
         <div>
-          <a href="#top" class="logo"><span class="ring" aria-hidden="true"></span><span>Moodring</span></a>
+          <a href="#top" class="logo" aria-label="Moodring home">
+            <picture>
+              <source srcset="/logo-64.webp" type="image/webp" />
+              <img class="logo-mark" src="/logo-64.png" width="32" height="32" alt="" decoding="async" />
+            </picture>
+            <span>Moodring</span>
+          </a>
           <p class="muted">Emotional intelligence for the agent economy.</p>
         </div>
         <div class="footer-cols">
