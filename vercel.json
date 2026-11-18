@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "",
+  "outputDirectory": "public",
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 10
+    }
+  },
+  "rewrites": [
+    { "source": "/health", "destination": "/api/index" },
+    { "source": "/x402", "destination": "/api/index" },
+    { "source": "/.well-known/x402", "destination": "/api/index" },
+    { "source": "/api/:path*", "destination": "/api/index" }
+  ]
+}

@@ -1,0 +1,11 @@
+node_modules
+data
+assets
+test
+.github
+*.sqlite
+*.db
+.env
+.env.local
+Dockerfile
+render.yaml

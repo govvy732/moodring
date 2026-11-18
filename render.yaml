@@ -9,8 +9,10 @@ services:
         value: production
       - key: PORT
         value: 10000
+      # PUBLIC_URL is optional. If unset, URLs are derived from the request host
+      # (e.g. https://<your-service>.onrender.com). Set it only for a custom domain.
       - key: PUBLIC_URL
-        value: https://moodring.onrender.com
+        sync: false
       - key: RECEIVE_ADDRESS
         sync: false
       - key: AGENT_PRIVATE_KEY

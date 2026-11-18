@@ -10,3 +10,5 @@ data/
 *.sqlite
 *.sqlite3
 *.db
+.vercel
+server.log
