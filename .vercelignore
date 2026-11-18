@@ -6,6 +6,6 @@ test
 *.sqlite
 *.db
 .env
-.env.local
+.env*.local
 Dockerfile
 render.yaml
