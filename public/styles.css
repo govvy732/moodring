@@ -72,15 +72,17 @@ code {
   background-size: 600px 600px;
 }
 
-/* ---------- Ring logo ---------- */
-.ring {
-  display: inline-block; width: 22px; height: 22px; border-radius: 50%;
-  background: conic-gradient(from 210deg, var(--violet), var(--pink), var(--orange), var(--violet));
-  -webkit-mask: radial-gradient(circle, transparent 42%, #000 44%);
-  mask: radial-gradient(circle, transparent 42%, #000 44%);
-  flex: none;
+/* ---------- Logo mark ---------- */
+.logo picture { display: flex; flex: none; }
+.logo-mark {
+  width: 32px; height: 32px; display: block; flex: none;
+  filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.45));
 }
-.ring-lg { width: 64px; height: 64px; animation: spin 9s linear infinite; }
+.empty-logo {
+  width: 64px; height: 64px; display: block;
+  filter: drop-shadow(0 0 16px rgba(167, 139, 250, 0.45));
+  animation: spin 12s linear infinite;
+}
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ---------- Nav ---------- */
@@ -134,18 +136,20 @@ code {
 .chips { list-style: none; padding: 0; margin: 26px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .chips li { font: 500 12px/1 var(--mono); color: var(--fg-dim); border: 1px solid var(--line); border-radius: 999px; padding: 7px 10px; }
 
-.hero-moon { display: flex; flex-direction: column; align-items: center; gap: 18px; }
-.moon {
+.hero-visual { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+.hero-logo-wrap {
   --mood: #a78bfa;
-  width: min(300px, 70vw); aspect-ratio: 1; border-radius: 50%; position: relative;
+  width: min(380px, 78vw); aspect-ratio: 1;
   display: grid; place-items: center;
-  background: conic-gradient(from 0deg, var(--violet), var(--pink), var(--orange), var(--mood), var(--violet));
-  animation: spin 18s linear infinite;
-  filter: drop-shadow(0 0 60px rgba(244, 114, 182, 0.35));
-  transition: filter 0.6s ease;
+  animation: spin 36s linear infinite, pulse-glow 4.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 48px color-mix(in srgb, var(--mood) 50%, transparent));
+  will-change: transform, filter;
 }
-.moon::after { content: ''; position: absolute; inset: 14px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #1d1838, var(--bg) 70%); }
-.moon-core { position: relative; z-index: 1; font-size: 64px; animation: spin 18s linear infinite reverse; }
+.hero-logo-wrap picture, .hero-logo { width: 100%; height: auto; display: block; }
+@keyframes pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 28px color-mix(in srgb, var(--mood) 35%, transparent)); }
+  50% { filter: drop-shadow(0 0 64px color-mix(in srgb, var(--mood) 70%, transparent)); }
+}
 .moon-caption { font: 500 13px/1.4 var(--mono); color: var(--fg-dim); text-align: center; min-height: 1.4em; }
 
 .stats {
@@ -270,10 +274,8 @@ details.raw pre { margin: 10px 0 0; max-height: 220px; overflow: auto; font: 12p
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .hero { grid-template-columns: 1fr; padding-top: 44px; gap: 28px; }
-  .hero-moon { order: -1; }
-  .moon { width: min(170px, 46vw); }
-  .moon::after { inset: 10px; }
-  .moon-core { font-size: 40px; }
+  .hero-visual { order: -1; }
+  .hero-logo-wrap { width: min(240px, 62vw); }
   .demo { grid-template-columns: 1fr; }
   .demo-in { border-right: 0; border-bottom: 1px solid var(--line); }
   .steps { grid-template-columns: 1fr; }
