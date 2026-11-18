@@ -23,17 +23,18 @@ The dev server hot-reloads on file changes.
 
 ## Adding a new service
 
-1. Add the service definition in `src/server.js` under `/.well-known/x402`
+1. Add the service definition in `src/app.js` under `/.well-known/x402`
 2. Add the route handler with `x402({ price, description })` middleware
-3. Update the smoke test in `test/smoke.mjs`
+3. Update the smoke test in `test/smoke.mjs` (and unit tests in `test/unit/` if the engine changes)
 4. Update the README services table
 
 ## Adding a new mood label
 
-1. Add the label to the 9-way mapping in `moodEngine.js > classifyMood`
+1. Add the label to the mapping in `moodEngine.js > classifyMood` and to `MOOD_LABELS`
 2. Add an entry in `INTERVENTIONS` (for `mood_ritual`)
 3. Add entries in `ROLE_ADVICE` for each agent role (for `mood_oracle`)
-4. Update the `MOOD_EMOJI` and `MOOD_COLOR` maps in `public/app.js`
+4. Update the `MOOD` and `ADVICE` maps in `public/app.js`, and the label list on the landing page
+5. Add a sample to the "every advertised label is reachable" unit test
 
 ## Filing issues
 

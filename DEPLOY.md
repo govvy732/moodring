@@ -12,13 +12,44 @@
    |---|---|
    | `RECEIVE_ADDRESS` | Your X Layer wallet (USDT0 receiver) — e.g. `0x8bfc0f414be2f70c5930f7713be1db188eb0c3bd` |
    | `AGENT_PRIVATE_KEY` | (optional) EVM private key for in-app payment verification — not required for the basic x402 challenge flow |
-   | `PUBLIC_URL` | Your Render service URL — e.g. `https://moodring.onrender.com` |
+   | `PUBLIC_URL` | (optional) Only needed for a custom domain. If unset, URLs come from the request host, e.g. `https://<your-service>.onrender.com` |
    | `AGENT_ID` | (after registration) The numeric ID from OKX.AI marketplace |
 
 6. Click **Apply** — first build takes ~2-3 minutes
 7. Hit `https://<your-service>.onrender.com/health` — should return `{"status":"ok",...}`
 
 That's it. The free tier sleeps after 15 min of inactivity; the first request after sleep takes ~30s to wake.
+
+## Vercel
+
+The repo deploys to Vercel as-is:
+
+- `public/` is served by Vercel's CDN (landing page, CSS, JS).
+- `api/index.js` exports the Express app as one serverless function. `vercel.json` rewrites `/health`, `/x402`, `/.well-known/x402` and `/api/*` to it.
+- URLs are derived from the request host, so previews and production both advertise the right endpoints. Set `PUBLIC_URL` only for a custom domain.
+
+```bash
+npm i -g vercel
+vercel deploy          # preview
+vercel deploy --prod   # production
+```
+
+Set `RECEIVE_ADDRESS` (and optionally `AGENT_ID`, `PUBLIC_URL`) under **Project → Settings → Environment Variables**.
+
+### Mood history on Vercel
+
+Serverless functions have no persistent disk. Out of the box Moodring stores `mood_track` history in SQLite under `/tmp`, which **only lasts while a function instance is warm**. Nothing crashes, but history can reset and different instances don't share it.
+
+For persistent history, add an Upstash Redis database (Vercel Marketplace → Upstash, or upstash.com) and set:
+
+| Key | Value |
+|---|---|
+| `UPSTASH_REDIS_REST_URL` | REST URL from Upstash (Vercel KV's `KV_REST_API_URL` also works) |
+| `UPSTASH_REDIS_REST_TOKEN` | REST token (or `KV_REST_API_TOKEN`) |
+
+The store picks Redis automatically when both are set. You can force a backend with `MOOD_STORE=redis|sqlite|memory`. `/health` reports which backend is active (`store`) and whether history is persistent (`persistentHistory`).
+
+The demo rate limit (60 calls/min per IP) is kept in memory per instance, so on Vercel it is approximate.
 
 ## Manual deploy (any Docker host)
 
@@ -76,7 +107,7 @@ curl -i -X POST https://your-domain.com/api/mood/read \
   -d '{"text":"test"}'
 ```
 
-Expected: `HTTP 402`, `PAYMENT-REQUIRED` header present, body contains `x402Version: 2` and `accepts[].maxAmountRequired: "3000"`.
+Expected: `HTTP 402`, `PAYMENT-REQUIRED` header present, body contains `x402Version: 2`, `accepts[0].amount: "3000"` and an `https://` `resource.url`. Paid calls are retried with a `PAYMENT-SIGNATURE` header.
 
 ## Verify the x402 manifest
 
@@ -90,7 +121,8 @@ Should return the full x402 v2 manifest with all 5 services, network `eip155:196
 
 - **Render auto-deploy doesn't fire** — go to the Render dashboard and click "Manual Deploy". Free-tier services that sleep sometimes miss the GitHub auto-deploy hook.
 - **First call after sleep is slow** — Render's free tier spins down after 15 min. The first request takes ~30s to wake the service. This is normal.
-- **SQLite locked** — we use WAL mode, but if you scale beyond a single instance you'll need to switch to Postgres. For hackathon demo, single instance is fine.
+- **SQLite locked** — we use WAL mode, but if you scale beyond a single instance you'll need a shared store. Set the Upstash Redis variables above.
+- **Render free tier disk** — Render's free web services have an ephemeral disk, so SQLite history resets on each deploy or restart. Attach a persistent disk and point `DATA_DIR` at it, or use Upstash Redis.
 - **OKX marketplace rejects the listing** — check the email for the specific reason. Most common: description too long (500 char limit) or services JSON not properly escaped. The CLI gives better error messages than the web UI.
 
 ## Environment variables reference
@@ -98,8 +130,10 @@ Should return the full x402 v2 manifest with all 5 services, network `eip155:196
 | Key | Required | Default | Description |
 |---|---|---|---|
 | `PORT` | no | `10000` | HTTP port |
-| `PUBLIC_URL` | no | `http://localhost:10000` | Base URL for x402 manifest and landing page links |
+| `PUBLIC_URL` | no | (derived from request host) | Override the base URL in the x402 manifest, agent card and ritual share links. Use for custom domains |
 | `RECEIVE_ADDRESS` | **yes (for paid services)** | `0x000...` | X Layer wallet that receives USDT0 payments |
 | `AGENT_ID` | no | (unset) | Set after OKX.AI registration for display in `/api/agents/moodring` |
-| `DATA_DIR` | no | `./data` | Where the SQLite database lives |
+| `DATA_DIR` | no | `./data` (`/tmp/moodring` on Vercel) | Where the SQLite database lives |
+| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | no | (unset) | Persistent mood history via Upstash Redis (recommended on Vercel) |
+| `MOOD_STORE` | no | auto | Force `redis`, `sqlite` or `memory` |
 | `NODE_ENV` | no | `development` | Set to `production` for live deploys |

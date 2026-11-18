@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "test": "node test/smoke.mjs"
+    "test": "node --test test/unit/*.test.mjs",
+    "smoke": "node test/smoke.mjs"
   },
   "keywords": [
     "okx",
@@ -23,12 +24,12 @@
   "license": "MIT",
   "dependencies": {
     "@okxweb3/x402-express": "^0.1.1",
-    "better-sqlite3": "^11.3.0",
+    "better-sqlite3": "^12.11.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20 <25"
   }
 }
